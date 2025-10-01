@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Al-Qur’an Digital Profesional</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Scheherazade+New&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
+<style>
+:root {
+    --primary-color: #0b0c1a;
+    --card-bg: rgba(255,255,255,0.05);
+    --accent-color: #00e5ff;
+    --accent-dark: #009db3;
+    --text-color: #e0e0e0;
+    --text-muted: #c0c0c0;
+    --highlight-color: #FFD700;
+    --shadow-soft: 0 8px 20px rgba(0,0,0,0.5);
+    --danger-color: #ff4444;
+}
+
+body {
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background: var(--primary-color);
+    color: var(--text-color);
+    min-height:100vh;
+}
+
+header {
+    background: var(--card-bg);
+    color: var(--accent-color);
+    padding:20px;
+    text-align:center;
+    font-weight:700;
+    font-size:1.5rem;
+    backdrop-filter: blur(12px) saturate(180%);
+    border-bottom:1px solid rgba(255,255,255,0.15);
+}
+
+.creator-tag {
+    font-size:0.65rem;
+    font-weight:400;
+    color: rgba(255,255,255,0.6);
+    display:block;
+    margin-top:4px;
+}
+
+#searchBox, #ayahSearchBox {
+    margin: 20px 15px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+}
+
+#searchBox input, #ayahSearchBox input {
+    flex:1;
+    border:none;
+    outline:none;
+    font-size:1rem;
+    padding:0;
+    background:transparent;
+    color: var(--text-color);
+}
+
+#surahList { padding:0 15px; }
+
+.surah-item {
+    background: var(--card-bg);
+    border-radius:12px;
+    margin-bottom:12px;
+    padding:15px 18px;
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.surah-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+}
+
+.surah-num {
+    background: var(--accent-color);
+    color:#000;
+    border-radius:50%;
+    width:40px;
+    height:40px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-right:15px;
+    font-weight:700;
+}
+
+.surah-info strong { color: var(--accent-color); font-weight:600; }
+.surah-meta { font-size:0.8rem; color: var(--text-muted); margin-top:2px; }
+
+#surahDetail { display:none; padding:15px; }
+
+#detailHeader {
+    background: var(--card-bg);
+    color: var(--accent-color);
+    padding:18px 15px;
+    border-radius:12px;
+    margin-bottom:15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    backdrop-filter: blur(12px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.15);
+}
+
+#detailHeader h2 { margin:0; font-size:1.5rem; font-weight:700; line-height:1.2; flex-grow:1; margin-left:45px; }
+
+.ayah {
+    background: var(--card-bg);
+    border-radius:12px;
+    margin-bottom:15px;
+    padding:20px;
+    border:1px solid rgba(255,255,255,0.15);
+    cursor:pointer;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s;
+}
+
+.ayah:hover { border-color: var(--accent-color); }
+
+.ayah.active {
+    background:#000;
+    color:#fff;
+    border-color: var(--highlight-color);
+    transform: scale(1.01);
+    box-shadow:0 0 10px rgba(255,255,255,0.2);
+}
+
+.ayah.active .ayah-ar {
+    color: var(--highlight-color);
+    text-shadow:0 0 5px var(--highlight-color),0 0 10px var(--highlight-color);
+    animation: shine-simple 1.5s infinite alternate;
+}
+
+@keyframes shine-simple {
+    from { opacity:0.8; text-shadow:0 0 5px var(--highlight-color);}
+    to { opacity:1; text-shadow:0 0 10px var(--highlight-color);}
+}
+
+.ayah-num {
+    background: var(--accent-color);
+    color:#000;
+    border-radius:6px;
+    padding:4px 10px;
+    margin-bottom:15px;
+    display:inline-block;
+    font-weight:600;
+}
+
+.ayah.active .ayah-num { background: var(--highlight-color); color:#000; }
+
+.ayah-ar {
+    font-family:'Scheherazade New',serif;
+    font-size:2.0rem;
+    line-height:2.8rem;
+    direction:rtl;
+    text-align:right;
+    margin:15px 0 20px 0;
+    color: var(--text-color);
+    font-weight:400;
+}
+
+.ayah-id {
+    font-size:0.9rem;
+    color: var(--text-muted);
+    border-top:1px solid rgba(255,255,255,0.1);
+    padding-top:15px;
+    margin-top:15px;
+    font-style:italic;
+    line-height:1.8;
+    font-weight:300;
+}
+
+.ayah.active .ayah-id {
+    color: #ccc;
+    border-top:1px solid rgba(255,255,255,0.3);
+}
+
+#playBtn {
+    margin:0 auto 15px auto;
+    padding:10px 20px;
+    background: var(--accent-color);
+    color:#000;
+    border:none;
+    border-radius:8px;
+    font-size:1rem;
+    cursor:pointer;
+    font-weight:600;
+    width:fit-content;
+    display:block;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s;
+}
+
+#playBtn:hover { background: var(--accent-dark); color:#fff; }
+
+#playBtn.pause {
+    background: var(--highlight-color);
+    color:#000;
+    box-shadow:0 0 10px var(--highlight-color);
+    transform:scale(1.02);
+}
+
+#backBtn {
+    background:none;
+    border:none;
+    color:#fff;
+    font-size:0.5rem;
+    line-height:1;
+    cursor:pointer;
+    padding:0;
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    font-weight:700;
+    opacity:0.9;
+    transition:opacity 0.2s;
+}
+
+#backBtn:hover { opacity:1; }
+
+#audioPlayer {
+    width:100%;
+    margin-top:20px;
+    border-radius:8px;
+    filter: invert(10%) sepia(50%) saturate(1000%) hue-rotate(180deg) brightness(80%) contrast(90%);
+}
+</style>
+</head>
+<body>
+
+<header>
+    <span class="title">Al-Qur’an Digital</span>
+    <span class="creator-tag">Dibuat dengan ❤️ oleh Khenenk Digital</span>
+</header>
+
+<div id="listPage">
+    <div id="searchBox">
+        <input type="text" id="searchInput" placeholder="Cari surah…">
+    </div>
+    <div id="surahList"></div>
+</div>
+
+<div id="surahDetail">
+    <div id="detailHeader">
+        <button id="backBtn">« Kembali</button>
+        <h2 id="detailTitle"></h2>
+    </div>
+
+    <div id="ayahSearchBox">
+        <input type="number" id="ayahSearchInput" placeholder="Cari ayat…">
+    </div>
+
+    <button id="playBtn">▶️ Putar Audio Surah</button>
+    <div id="ayahContainer"></div>
+    <audio id="audioPlayer" controls></audio>
+</div>
+
+<script>
+const apiBase = 'https://api.alquran.cloud/v1';
+const listEl = document.getElementById('surahList');
+const detailEl = document.getElementById('surahDetail');
+const listPage = document.getElementById('listPage');
+const searchInput = document.getElementById('searchInput');
+const detailTitle = document.getElementById('detailTitle');
+const ayahContainer = document.getElementById('ayahContainer');
+const audioPlayer = document.getElementById('audioPlayer');
+const playBtn = document.getElementById('playBtn');
+const backBtn = document.getElementById('backBtn');
+const ayahSearchInput = document.getElementById('ayahSearchInput');
+
+let surahList = [];
+let currentSurah = null;
+let currentAyahList = [];
+let currentAyahIndex = 0;
+let isPlaying = false;
+
+async function loadSurahList() {
+  try {
+    const res = await fetch(`${apiBase}/surah`);
+    const data = await res.json();
+    surahList = data.data;
+    renderSurahList('');
+  } catch (error) {
+    listEl.innerHTML = `<p style="text-align:center; color:var(--danger-color);">Gagal memuat daftar surah. Pastikan Anda memiliki koneksi internet.</p>`;
+    console.error('Gagal memuat daftar surah:', error);
+  }
+}
+
+function renderSurahList(filter) {
+  listEl.innerHTML = '';
+  surahList
+    .filter(s => s.englishName.toLowerCase().includes(filter) || s.name.includes(filter))
+    .forEach(s => {
+      const item = document.createElement('div');
+      item.className = 'surah-item';
+      item.innerHTML = `<div class="surah-num">${s.number}</div>
+        <div class="surah-info"><div><strong>${s.englishName} (${s.name})</strong></div>
+        <div class="surah-meta">${s.revelationType.toUpperCase()}</div></div>`;
+      item.onclick = () => openSurah(s.number, s.englishName, s.name);
+      listEl.appendChild(item);
+    });
+}
+
+searchInput.addEventListener('input', e => renderSurahList(e.target.value.toLowerCase()));
+
+async function openSurah(num, engName, arabName) {
+  currentSurah = num;
+  listPage.style.display = 'none';
+  detailEl.style.display = 'block';
+  detailTitle.textContent = `${engName} (${arabName})`;
+  ayahContainer.innerHTML = '<p style="text-align:center; color:#555;">Memuat...</p>';
+  currentAyahList = [];
+  currentAyahIndex = 0;
+  isPlaying = false;
+  ayahSearchInput.value = '';
+  
+  try {
+    const [arRes, idRes] = await Promise.all([
+      fetch(`${apiBase}/surah/${num}/quran-uthmani`),
+      fetch(`${apiBase}/surah/${num}/id.indonesian`)
+    ]);
+    const arData = (await arRes.json()).data;
+    const idData = (await idRes.json()).data;
+  
+    ayahContainer.innerHTML = '';
+    currentAyahList = arData.ayahs.map(a => a.number);
+  
+    arData.ayahs.forEach((a, i) => {
+      let arabText = a.text.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/u, '');
+      const div = document.createElement('div');
+      div.className = 'ayah';
+      div.dataset.index = i;
+      div.dataset.global = a.number;
+      div.innerHTML = `<div class="ayah-num">${a.numberInSurah}</div>
+        <div class="ayah-ar">${arabText}</div>
+        <div class="ayah-id">${idData.ayahs[i].text}</div>`;
+      div.onclick = () => playFromAyah(i);
+      ayahContainer.appendChild(div);
+    });
+  } catch (error) {
+    ayahContainer.innerHTML = `<p style="text-align:center; color:var(--danger-color);">Gagal memuat data surah. Silakan coba lagi saat terhubung ke internet.</p>`;
+    console.error('Gagal memuat data surah:', error);
+  }
+
+  // Pastikan tombol dan penyorotan di-reset saat membuka surah baru
+  playBtn.classList.remove('pause');
+  playBtn.textContent = '▶️ Putar Audio Surah';
+  clearAyahHighlight();
+}
+
+function playFromAyah(index) {
+  if (isPlaying) {
+    audioPlayer.pause();
+  }
+  currentAyahIndex = index;
+  playCurrentAyah();
+}
+
+function playCurrentAyah() {
+    if (currentAyahIndex >= currentAyahList.length) {
+        // Selesai membaca surah
+        isPlaying = false;
+        playBtn.classList.remove('pause');
+        playBtn.textContent = '▶️ Putar Audio Surah';
+        clearAyahHighlight();
+        return;
+    }
+
+    const globalAyahNum = currentAyahList[currentAyahIndex];
+    audioPlayer.src = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${globalAyahNum}.mp3`;
+    audioPlayer.play();
+    isPlaying = true;
+    
+    // Update UI
+    playBtn.textContent = '⏸️ Jeda Audio Surah';
+    playBtn.classList.add('pause');
+
+    highlightAyah(currentAyahIndex);
+}
+
+function highlightAyah(index) {
+    clearAyahHighlight();
+    const ayahEl = ayahContainer.querySelector(`.ayah[data-index="${index}"]`);
+    if (ayahEl) {
+        ayahEl.classList.add('active');
+        ayahEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function clearAyahHighlight() {
+    const activeAyah = ayahContainer.querySelector('.ayah.active');
+    if (activeAyah) {
+        activeAyah.classList.remove('active');
+    }
+}
+
+playBtn.onclick = () => {
+    if (!currentSurah) return;
+    if (isPlaying) {
+        audioPlayer.pause();
+        isPlaying = false;
+        playBtn.textContent = '▶️ Putar Audio Surah';
+        playBtn.classList.remove('pause');
+    } else {
+        // Jika belum ada audio yang diputar, mulai dari ayat pertama
+        if (audioPlayer.paused && currentAyahIndex === 0) {
+            playCurrentAyah();
+        } else {
+            audioPlayer.play();
+            isPlaying = true;
+            playBtn.textContent = '⏸️ Jeda Audio Surah';
+            playBtn.classList.add('pause');
+        }
+    }
+};
+
+audioPlayer.addEventListener('ended', () => {
+    if (isPlaying) {
+        currentAyahIndex++;
+        playCurrentAyah();
+    }
+});
+
+backBtn.onclick = () => {
+  detailEl.style.display = 'none';
+  listPage.style.display = 'block';
+  audioPlayer.pause();
+  isPlaying = false;
+  clearAyahHighlight();
+  playBtn.textContent = '▶️ Putar Audio Surah';
+  playBtn.classList.remove('pause');
+};
+
+ayahSearchInput.addEventListener('input', (e) => {
+    const searchText = e.target.value.trim();
+    const ayahElements = ayahContainer.querySelectorAll('.ayah');
+    clearAyahHighlight();
+
+    if (searchText === '') {
+        return;
+    }
+
+    // Cari ayat yang cocok
+    const foundAyah = Array.from(ayahElements).find(ayahEl => {
+        return ayahEl.querySelector('.ayah-num').textContent.trim() === searchText;
+    });
+
+    if (foundAyah) {
+        const index = parseInt(foundAyah.dataset.index, 10);
+        highlightAyah(index);
+        foundAyah.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
+
+loadSurahList();
+</script>
+
+</body>
+</html>
