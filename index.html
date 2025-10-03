@@ -16,7 +16,6 @@
     --text-muted: #c0c0c0;
     --highlight-color: #FFD700;
     --shadow-soft: 0 8px 20px rgba(0,0,0,0.5);
-    --danger-color: #ff4444;
 }
 
 body {
@@ -41,10 +40,6 @@ header {
     align-items:center;
 }
 
-.header-title {
-    margin:0;
-}
-
 .header-creator {
     font-size:0.65rem;
     font-weight:400;
@@ -58,19 +53,20 @@ header {
 .hidden { display:none !important; }
 
 #searchBox, #ayahSearchBox {
-    margin: 10px 15px;              /* Margin lebih kecil */
-    background: rgba(255,255,255,0.08);  /* Latar lebih tipis */
-    border-radius: 8px;             /* Sudut lebih kecil */
-    padding: 6px 12px;              /* Padding lebih kecil */
+    margin: 10px 15px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 6px 12px;
     display: flex;
 }
 
+#searchBox input,
 #ayahSearchBox input {
     flex:1;
     border:none;
     outline:none;
-    font-size:0.85rem;              /* Teks lebih kecil */
-    padding:4px 6px;                /* Tinggi input lebih kecil */
+    font-size:0.85rem;
+    padding:4px 6px;
     background:transparent;
     color: var(--text-color);
 }
@@ -250,7 +246,7 @@ header {
     filter: invert(10%) sepia(50%) saturate(1000%) hue-rotate(180deg) brightness(80%) contrast(90%);
 }
 
-/* Timer Sleep tanpa box, dengan label */
+/* Timer Sleep */
 #sleepTimerBox { margin-bottom:5px; }
 #sleepTimerBox label { display:block; margin-bottom:4px; font-size:0.8rem; color: var(--accent-color); font-weight:600; }
 #sleepTimerInputs { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
@@ -264,7 +260,6 @@ header {
 <body>
 
 <header>
-    <h1 class="header-title">Al-Qur’an Digital</h1>
     <span class="header-creator">Dibuat dengan ❤️ oleh Khenenk Digital</span>
 </header>
 
@@ -276,7 +271,6 @@ header {
 </div>
 
 <div id="surahDetail">
-    <!-- Timer Sleep di atas nama surah -->
     <div id="sleepTimerBox">
         <label>Atur Waktu Tidur (Jam : Menit : Detik)</label>
         <div id="sleepTimerInputs">
@@ -304,13 +298,7 @@ header {
 </div>
 
 <script>
-// Header control
-const headerTitle = document.querySelector('.header-title');
-const listPageEl = document.getElementById('listPage');
-const detailEl = document.getElementById('surahDetail');
-const headerCreator = document.querySelector('.header-creator');
-
-// Timer Sleep
+// --- Timer Sleep ---
 let sleepTimerInterval = null;
 let sleepActive = false;
 const toggleSleepTimer = document.getElementById('toggleSleepTimer');
@@ -320,6 +308,8 @@ const sleepSeconds = document.getElementById('sleepSeconds');
 const sleepTimerDisplay = document.getElementById('sleepTimerDisplay');
 const audioPlayer = document.getElementById('audioPlayer');
 const playBtn = document.getElementById('playBtn');
+const detailEl = document.getElementById('surahDetail');
+const listPageEl = document.getElementById('listPage');
 
 function formatTime(h,m,s){return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;}
 
@@ -340,7 +330,6 @@ toggleSleepTimer.onclick = ()=>{
                 audioPlayer.pause();
                 detailEl.style.display='none';
                 listPageEl.style.display='block';
-                headerTitle.classList.remove('hidden');
                 playBtn.textContent='▶️ Putar Audio Surah';
                 playBtn.classList.remove('pause');
                 alert('Waktu tidur selesai. Audio dihentikan.');
@@ -353,7 +342,7 @@ toggleSleepTimer.onclick = ()=>{
     }
 };
 
-// --- Kode asli untuk memuat Surah & audio ---
+// --- Surah & Audio ---
 const apiBase = 'https://api.alquran.cloud/v1';
 const listEl = document.getElementById('surahList');
 const searchInput = document.getElementById('searchInput');
@@ -395,7 +384,6 @@ async function openSurah(num,engName,arabName){
   currentSurah=num;
   listPageEl.style.display='none';
   detailEl.style.display='block';
-  headerTitle.classList.add('hidden'); // hide title
   detailTitle.textContent=`${engName} (${arabName})`;
   ayahContainer.innerHTML='<p style="text-align:center;color:#555;">Memuat...</p>';
   currentAyahList=[]; currentAyahIndex=0; isPlaying=false; ayahSearchInput.value=''; playBtn.textContent='▶️ Putar Audio Surah'; playBtn.classList.remove('pause'); clearAyahHighlight();
